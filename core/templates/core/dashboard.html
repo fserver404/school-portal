@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>داشبورد - پرتال مدارس</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: "Vazir", sans-serif;
+    }
+    .sidebar {
+      background-color: #1f1f1f;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .sidebar a {
+      color: #e9ffff;
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      background-color: #333;
+      color: #65d9d9;
+    }
+    .card {
+      background-color: #1f1f1f;
+      border: none;
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+    .navbar {
+      background-color: #1f1f1f !important;
+      border-radius: 12px;
+      padding: 10px;
+    }
+    #calendar table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  #calendar td {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    transition: all 0.2s;
+    cursor: pointer;
+    background-color: #1f1f1f; /* رنگ پیش‌فرض سلول */
+    color: white;
+  }
+  #calendar td:hover {
+    transform: scale(1.1);
+    background-color: #333;
+  }
+  
+  .bg-holiday { background-color: #e53935 !important; color: white; }
+  .bg-event { background-color: #2196f3 !important; color: white; position: relative; }
+  .bg-today { border: 5px solid #4cacaf !important; }
+  .event-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #fff;
+    color: #2196f3;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  #calendar-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  #calendar .btn {
+    border-radius: 20px;
+  }
+  .calendar-card {
+    background: linear-gradient(145deg, #1f1f1f, #2c2c2c);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+        <h4 class="text-light">منو</h4>
+        <a href="{% url 'dashboard' %}">🏠 داشبورد</a>
+        <a href="{% url 'subjects' %}">📚 دروس</a>
+        <a href="#">📝 نمرات</a>
+        <a href="#">📅 تقویم آموزشی</a>
+        <a href="{% url 'logout' %}">🚪 خروج</a>
+      </nav>
+
+      <!-- Main -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <nav class="navbar navbar-dark">
+          <span class="navbar-brand mb-0 h1">داشبورد {{ role }}</span>
+        </nav>
+        
+        <div class="pt-3 pb-2 mb-3">
+          <h2>خوش آمدید، {{ request.user.username }}</h2>
+        </div>
+        <!-- Announcements -->
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card">
+      <h4>📢 آخرین اعلانات</h4>
+      <ul>
+        {% for a in announcements %}
+          <li><strong>{{ a.title }}</strong> - {{ a.created_at|date:"Y/m/d" }}</li>
+          <p>{{ a.content }}</p>
+        {% empty %}
+          <li>اعلانی وجود ندارد.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="col-md-6">
+    <div class="card">
+      <h4>📅 تقویم آموزشی</h4>
+        <div class="d-flex justify-content-between mb-2">
+          <button class="btn btn-sm btn-outline-light" onclick="prevMonth()">ماه قبل</button>
+          <h5 id="calendar-title"></h5>
+          <button class="btn btn-sm btn-outline-success" onclick="goToToday()">امروز</button>
+          <button class="btn btn-sm btn-outline-light" onclick="nextMonth()">ماه بعد</button>
+        </div>
+        <div id="calendar" class="table-responsive"></div>
+    </div>
+  </div>
+</div>
+
+        {% if role == "مدیر" %}
+          <div class="row">
+            <div class="col-md-3"><div class="card">👨‍🎓 دانش‌آموزان: {{ students_count }}</div></div>
+            <div class="col-md-3"><div class="card">👩‍🏫 معلمین: {{ teachers_count }}</div></div>
+            <div class="col-md-3"><div class="card">📚 دروس: {{ subjects_count }}</div></div>
+            <div class="col-md-3"><div class="card">📝 نمرات: {{ grades_count }}</div></div>
+          </div>
+        {% elif role == "معلم" %}
+          <h4>دروس شما:</h4>
+          <ul>
+            {% for s in subjects %}
+              <li>{{ s.name }} ({{ s.grades.count }} نمره ثبت شده)</li>
+            {% empty %}
+              <li>هیچ درسی ثبت نشده.</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <h4>نمرات شما:</h4>
+          <ul>
+            {% for g in grades %}
+              <li>{{ g.subject.name }}: {{ g.score }}</li>
+            {% empty %}
+              <li>هیچ نمره‌ای ثبت نشده.</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </main>
+    </div>
+  </div>
+
+<!--اسکریپت تقویم آموزشی -->
+<script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
+<script>
+  // دریافت رویدادها از Django (context → JSON)
+  const events = JSON.parse('{{ calendar_events_json|safe }}'); 
+  // مثال شکل داده‌ها:
+  // [{date: "1404-06-10", title: "امتحان ریاضی"}, {date: "1404-06-15", title: "تعطیل رسمی"}]
+
+  let current = new Date(); // تاریخ فعلی
+  let currentYear, currentMonth;
+
+  function renderCalendar() {
+    const j = jalaali.toJalaali(current);
+    currentYear = j.jy;
+    currentMonth = j.jm;
+
+    document.getElementById("calendar-title").innerText = `ماه ${currentMonth} سال ${currentYear}`;
+
+    let startOfMonth = jalaali.toGregorian(currentYear, currentMonth, 1);
+    let firstDay = new Date(startOfMonth.gy, startOfMonth.gm - 1, startOfMonth.gd).getDay();
+    let daysInMonth = jalaali.jalaaliMonthLength(currentYear, currentMonth);
+
+    let html = `<table class="table text-center text-light">
+  <thead><tr>
+    <th>ش</th><th>ی</th><th>د</th><th>س</th><th>چ</th><th>پ</th><th>ج</th>
+  </tr></thead><tbody><tr>`;
+
+for (let i = 0; i < firstDay; i++) html += "<td></td>";
+
+for (let d = 1; d <= daysInMonth; d++) {
+  const fullDate = `${currentYear}-${String(currentMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const dayEvents = events.filter(e => e.date === fullDate);
+
+  let classes = "p-2 rounded position-relative";
+  let tooltip = dayEvents.length ? dayEvents.map(e => e.title).join(", ") : "موردی نیست";
+
+  // تعطیلات جمعه
+  let weekday = (firstDay + d - 1) % 7;
+  if (weekday === 6) classes += " bg-holiday";
+
+  // امروز
+  const todayJ = jalaali.toJalaali(new Date());
+  if (d === todayJ.jd && currentMonth === todayJ.jm && currentYear === todayJ.jy) classes += " bg-today";
+
+  // رویداد
+  if (dayEvents.length) classes += " bg-event";
+
+  html += `<td class="${classes}" title="${tooltip}">${d}`;
+  if (dayEvents.length) html += `<div class="event-badge">${dayEvents.length}</div>`;
+  html += `</td>`;
+
+  if ((firstDay + d) % 7 === 0) html += "</tr><tr>";
+}
+
+html += "</tr></tbody></table>";
+document.getElementById("calendar").innerHTML = html;
+
+  }
+
+  function prevMonth() {
+    current.setMonth(current.getMonth() - 1);
+    renderCalendar();
+  }
+
+  function nextMonth() {
+    current.setMonth(current.getMonth() + 1);
+    renderCalendar();
+  }
+
+  function goToToday() {
+      current = new Date();
+      renderCalendar();
+  }
+  renderCalendar();
+  
+  
+</script>
+<!-- پایان اسکریپت تقویم آموزشی-->
+</body>
+</html>

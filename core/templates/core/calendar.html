@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تقویم آموزشی</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.11/locales/fa.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.2.7/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment-jalaali@0.10.0/build/moment-jalaali.js"></script>
+
+    <style>
+        body {
+            background: #111827;
+            color: #f3f4f6;
+            font-family: 'IRANSans', sans-serif;
+        }
+        #calendar {
+            max-width: 1000px;
+            margin: 50px auto;
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+        .fc-daygrid-day.fc-day-today {
+            background: #065f46 !important; /* سبز برای امروز */
+            color: #fff !important;
+        }
+        .fc-daygrid-day:hover {
+            background: #374151 !important;
+            cursor: pointer;
+        }
+        .tooltip {
+            position: absolute;
+            background: #1e3a8a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+            z-index: 9999;
+        }
+        .btn-today {
+            background: #2563eb;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .btn-today:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+
+<div id="calendar"></div>
+<div id="tooltip" class="tooltip"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let tooltip = document.getElementById("tooltip");
+        let events = {{ events_json|safe }};
+
+        let calendarEl = document.getElementById("calendar");
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            locale: "fa",
+            firstDay: 6,
+            headerToolbar: {
+                left: "prev,next todayBtn",
+                center: "title",
+                right: ""
+            },
+            customButtons: {
+                todayBtn: {
+                    text: "امروز",
+                    click: function() {
+                        calendar.today();
+                    }
+                }
+            },
+            events: events.map(ev => ({
+                id: ev.id,
+                title: ev.title,
+                start: ev.date,
+                backgroundColor: "#2563eb",
+                borderColor: "#2563eb",
+                textColor: "#fff"
+            })),
+            dayCellDidMount: function(info) {
+                // tooltip
+                info.el.addEventListener("mouseenter", function(e) {
+                    let dayEvents = events.filter(ev => ev.date === info.dateStr);
+                    if (dayEvents.length > 0) {
+                        tooltip.innerHTML = dayEvents.map(ev => `<b>${ev.title}</b><br>${ev.description}`).join("<hr>");
+                    } else {
+                        tooltip.innerHTML = "موردی نیست";
+                    }
+                    tooltip.style.display = "block";
+                    tooltip.style.top = (e.pageY + 15) + "px";
+                    tooltip.style.left = (e.pageX + 15) + "px";
+                });
+                info.el.addEventListener("mouseleave", function() {
+                    tooltip.style.display = "none";
+                });
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+
+</body>
+</html>

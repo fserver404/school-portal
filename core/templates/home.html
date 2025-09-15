@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پرتال مدارس</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: "Vazir", sans-serif;
+        }
+        .sidebar {
+            background-color: #1f1f1f;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: #bbb;
+            display: block;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #333;
+            color: #fff;
+        }
+        .card {
+            background-color: #1f1f1f;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .navbar {
+            background-color: #1f1f1f !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <h4 class="text-light">منو</h4>
+                <a href="#">🏠 داشبورد</a>
+                <a href="#">📚 دروس</a>
+                <a href="#">📝 نمرات</a>
+                <a href="#">📅 تقویم آموزشی</a>
+                <a href="#">👥 کاربران</a>
+            </nav>
+
+            <!-- Main -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <nav class="navbar navbar-dark">
+                    <span class="navbar-brand mb-0 h1">پرتال مدارس</span>
+                </nav>
+                
+                <div class="pt-3 pb-2 mb-3">
+                    <h2>داشبورد</h2>
+                    <p>به پرتال مدارس خوش آمدید.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <h5>تعداد دانش‌آموزان</h5>
+                            <p>120 نفر</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <h5>تعداد معلمین</h5>
+                            <p>20 نفر</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <h5>رویدادهای هفته</h5>
+                            <p>5 رویداد</p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+</html>

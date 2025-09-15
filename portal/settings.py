@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-sbf0-dr+avy2wz=t6cje5osnk7-cl3q@7e0mutyq2gjk#&uws6
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = "core.User"
 
 # Application definition
 
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # apps
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -53,11 +55,12 @@ ROOT_URLCONF = "portal.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],  # می‌تونی مسیر اضافی هم بدی
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -102,9 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "fa-ir"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Tehran"
 
 USE_I18N = True
 
@@ -120,3 +123,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'https://localhost:8000']

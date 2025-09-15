@@ -1,0 +1,3 @@
+# school-portal/static/robots.txt
+User-agent: *
+Disallow:
